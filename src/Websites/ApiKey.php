@@ -9,8 +9,9 @@ class ApiKey
     private string $id;
     private string $name;
     private ?string $apiKey;
-    private string $comment;
+    private ?string $comment;
     private string $createdAt;
+    private string $expiresAt;
     private string $intpWebsiteId;
     private string $intpCustomerId;
 
@@ -124,5 +125,21 @@ class ApiKey
     public function getCreatedAt(): string
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param string $expiresAt
+     */
+    public function setExpiresAt(string $expiresAt): void
+    {
+        $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpiresAt(): string
+    {
+        return $this->expiresAt;
     }
 }

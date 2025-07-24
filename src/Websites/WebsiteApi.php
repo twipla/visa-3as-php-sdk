@@ -17,6 +17,7 @@ class WebsiteApi
     public function __construct(VisaHttpClient $visaHttpClient)
     {
         $this->visaHttpClient = $visaHttpClient;
+        $this->apiKeyHydrator = new ApiKeyHydrator();
     }
 
     public function setIntpWebsiteId(string $intpWebsiteId): WebsiteApi

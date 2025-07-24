@@ -15,8 +15,9 @@ class ApiKeyHydrator implements HydratorInterface
         $apiKey->setId($data['id']);
         $apiKey->setName($data['name']);
         $apiKey->setApiKey($data['apiKey'] ?? null);
-        $apiKey->setComment($data['comment']);
+        $apiKey->setComment($data['comment'] ?? null);
         $apiKey->setCreatedAt($data['createdAt']);
+        $apiKey->setExpiresAt($data['expiresAt']);
         $apiKey->setIntpWebsiteId($data["intpWebsiteId"]);
         $apiKey->setIntpCustomerId($data["intpCustomerId"]);
 

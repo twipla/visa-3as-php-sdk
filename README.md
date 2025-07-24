@@ -301,20 +301,23 @@ visa->website({INTP_WEBSITE_ID})->listWhitelistedDomains();
 
 ```php
 $visa->website({INTP_WEBSITE_ID})->createApiKey([
-    'name' => {STRING},
-    'comment' => {STRING},
-    'expiresAt' => {ISO_STRING|OPTIONAL}
+    'name' => {STRING}, // Name to identify the API key
+    'comment' => {STRING|OPTIONAL}, // Optional description or notes
+    'expiresAt' => {ISO_STRING|OPTIONAL} // Expiration timestamp (ISO 8601); unlimited if omitted
 ]);
 
 [
-    'id' => {UUID_STRING},
-    'name' => {STRING},
-    'apiKey' => {STRING},
+    'id' => {UUID_STRING}, // Unique ID of the API key
+    'name' => {STRING}, // Name of the API key
+    'apiKey' => {STRING}, // The actual API key (only returned once — save it immediately!)
     'comment' => {STRING},
     'createdAt' => {ISO_STRING},
+    'expiresAt' => {ISO_STRING},
     'intpWebsiteId' => {STRING},
     'intpCustomerId' => {STRING}
 ]
+
+⚠️ Note: apiKey is only returned at creation time. Make sure to store it securely — it cannot be retrieved again.
 ```
 
 #### List api keys for a website
@@ -328,6 +331,7 @@ $visa->website({INTP_WEBSITE_ID})->listApiKeys();
         'name' => {STRING},
         'comment' => {STRING},
         'createdAt' => {ISO_STRING},
+        'expiresAt' => {ISO_STRING},
         'intpWebsiteId' => {STRING},
         'intpCustomerId' => {STRING}
     ]
