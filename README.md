@@ -297,6 +297,53 @@ visa->website({INTP_WEBSITE_ID})->deleteWhitelistedDomain(STRING);
 visa->website({INTP_WEBSITE_ID})->listWhitelistedDomains();
 ```
 
+#### Create an api key for a website
+
+```php
+$visa->website({INTP_WEBSITE_ID})->createApiKey([
+    'name' => {STRING}, // Name to identify the API key
+    'comment' => {STRING|OPTIONAL}, // Optional description or notes
+    'expiresAt' => {ISO_STRING|OPTIONAL} // Expiration timestamp (ISO 8601); unlimited if omitted
+]);
+
+[
+    'id' => {UUID_STRING}, // Unique ID of the API key
+    'name' => {STRING}, // Name of the API key
+    'apiKey' => {STRING}, // The actual API key (only returned once — save it immediately!)
+    'comment' => {STRING},
+    'createdAt' => {ISO_STRING},
+    'expiresAt' => {ISO_STRING},
+    'intpWebsiteId' => {STRING},
+    'intpCustomerId' => {STRING}
+]
+
+⚠️ Note: apiKey is only returned at creation time. Make sure to store it securely — it cannot be retrieved again.
+```
+
+#### List api keys for a website
+
+```php
+$visa->website({INTP_WEBSITE_ID})->listApiKeys();
+
+[
+    [
+        'id' => {UUID_STRING},
+        'name' => {STRING},
+        'comment' => {STRING},
+        'createdAt' => {ISO_STRING},
+        'expiresAt' => {ISO_STRING},
+        'intpWebsiteId' => {STRING},
+        'intpCustomerId' => {STRING}
+    ]
+]
+```
+
+#### Delete an api key for a website
+
+```php
+$visa->website({INTP_WEBSITE_ID})->deleteApiKey({ID});
+```
+
 ### API for managing a subscription of type `website`
 
 #### Upgrade - immediately applies a higher stp count package to the subscription

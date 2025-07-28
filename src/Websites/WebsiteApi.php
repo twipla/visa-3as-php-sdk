@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Visa\Websites;
 
+use Visa\HydratorInterface;
 use Visa\VisaHttpClient;
 
 class WebsiteApi
@@ -11,10 +12,12 @@ class WebsiteApi
     private string $intpWebsiteId;
 
     private VisaHttpClient $visaHttpClient;
+    private HydratorInterface $apiKeyHydrator;
 
     public function __construct(VisaHttpClient $visaHttpClient)
     {
         $this->visaHttpClient = $visaHttpClient;
+        $this->apiKeyHydrator = new ApiKeyHydrator();
     }
 
     public function setIntpWebsiteId(string $intpWebsiteId): WebsiteApi
@@ -64,5 +67,36 @@ class WebsiteApi
         $response = $this->visaHttpClient->get('/v2/3as/websites/' . $this->intpWebsiteId . '/whitelisted-domains');
 
         return $response->getPayload();
+    }
+
+    public function createApiKey(array $input): ApiKey
+    {
+        if (!$this->intpWebsiteId) {
+            throw new \Exception('Website external id not set.');
+        }
+
+        $response = $this->visaHttpClient->post('/v2/3as/websites/' . $this->intpWebsiteId . '/api-keys', $input);
+
+        return $this->apiKeyHydrator->hydrateObject($response->getPayload());
+    }
+
+    public function listApiKeys(): array
+    {
+        if (!$this->intpWebsiteId) {
+            throw new \Exception('Website external id not set.');
+        }
+
+        $response = $this->visaHttpClient->get('/v2/3as/websites/' . $this->intpWebsiteId . '/api-keys');
+
+        return $this->apiKeyHydrator->hydrateObjectArray($response->getPayload());
+    }
+
+    public function deleteApiKey(string $id)
+    {
+        if (!$this->intpWebsiteId) {
+            throw new \Exception('Website external id not set.');
+        }
+
+        $this->visaHttpClient->delete('/v2/3as/websites/' . $this->intpWebsiteId . '/api-keys/' . $id);
     }
 }
