@@ -133,6 +133,15 @@ $visa->intpcs->create([
 ]);
 ```
 
+#### Register an INTPc without register a website. Websites can be added further using the [Add Website](#create-a-website-with-its-own-subscription-and-attach-it-to-an-existing-intpc) endpoint.
+
+```php
+$visa->intpcs->create([
+        'intpCustomerId' => {INTP_CUSTOMER_ID},
+        'email' => {INTP_CUSTOMER_EMAIL},
+]);
+```
+
 #### List all available customers
 
 ```php
