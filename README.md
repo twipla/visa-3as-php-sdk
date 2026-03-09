@@ -344,6 +344,86 @@ $visa->website({INTP_WEBSITE_ID})->listApiKeys();
 $visa->website({INTP_WEBSITE_ID})->deleteApiKey({ID});
 ```
 
+### Website Contributors API
+
+Manage contributors for a website and control their level of access.
+Any existing customer can be added as a contributor. If the customer doesn't exist yet, create them first before adding them as a contributor — no website is required at creation time.
+Once added, the contributor can access the dashboard normally via the dashboard iframe URL, where the website ID is the ID of the website they contribute to.
+If the website selector is enabled within the dashboard, the contributor will also see the website listed there, alongside any websites they own.
+
+Each contributor is assigned one of the following roles:
+
+| Role                             | Constant    | Access                                                                                                                                                                                                           |
+| -------------------------------- |-------------| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Editor**                       | `editor`    | Full edit access, including content updates and structural changes.                                                                                                                                              |
+| **Watcher**                      | `watcher`   | View-only access to website data. Cannot make any edits.                                                                                                                                                         |
+| **Custom Dashboard Contributor** | `dashboard` | View-only access to custom dashboards explicitly shared with them. No access to any other platform content or settings. Access to specific dashboards is granted by the website owner from within the dashboard. |
+
+---
+
+#### Add contributor for a website
+The contributor will gain access to the dashboard with restricted permissions. The level of access and available actions depend on the assigned role.
+
+A contributor can be assigned only one role at a time.
+
+Roles follow a permission hierarchy, where higher-level roles automatically include the permissions granted by lower-level roles.
+
+This endpoint can also be used to update a contributor's role. If the same contributor is added again with a different role, the previous role will be replaced with the new one.
+
+```php
+$visa->website({INTP_WEBSITE_ID})->addContributor([
+    "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+    "role" => "editor"|"watcher"|"dashboard",
+]);
+```
+
+#### List contributors for a website
+List all contributors of a website
+
+```php
+$visa->website({INTP_WEBSITE_ID})->listContributors();
+
+[
+    "owner" => [
+        "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+        "email" => "owner_email_string",
+    ],
+    "contributors" => [
+        "editor" => [
+            [
+            "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+            "email" => "editor1_email_string",
+            ],
+            [
+                "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+                "email" => "editor2_email_string",
+            ],
+        ],
+        "watcher" => [
+            [
+                "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+                "email" => "watcher_email_string",
+            ],
+        ],
+        "dashboard" => [
+            [
+                "intpCustomerId" => "{INTP_CUSTOMER_ID}",
+                "email" => "dashboard_email_string",
+            ],
+        ],
+    ],
+]
+```
+
+#### Delete contributor for a website
+Remove a contributor from a website.
+
+The contributor will immediately lose access to the dashboard and all associated resources.
+
+```php
+$visa->website({INTP_WEBSITE_ID})->deleteContributor({INTP_CUSTOMER_ID});
+```
+
 ### API for managing a subscription of type `website`
 
 #### Upgrade - immediately applies a higher stp count package to the subscription
