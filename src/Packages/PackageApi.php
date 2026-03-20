@@ -14,7 +14,7 @@ class PackageApi
     public function __construct(VisaHttpClient $visaHttpClient)
     {
         $this->httpClient = $visaHttpClient;
-        $this->hydrator = new PackageHydrator();
+        $this->hydrator = new PackageHydrator(new PackageRestrictionHydrator());
     }
 
     public function setPackageId(string $packageId): PackageApi
@@ -29,5 +29,41 @@ class PackageApi
         $response = $this->httpClient->patch('/v2/3as/packages/' . $this->packageId, $package);
 
         return $this->hydrator->hydrateObject($response->getPayload());
+    }
+
+    /**
+     * @param string $targetId
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function assign(string $targetId): void
+    {
+        if (!$this->packageId) {
+            throw new \Exception('Package id not set.');
+        }
+
+        if (!$targetId) {
+            throw new \Exception('Target id not set.');
+        }
+
+        $this->httpClient->put('/v3/3as/packages/'. $this->packageId . '/assignments/' . $targetId, []);
+    }
+
+    /**
+     * @param string $targetId
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function unassign(string $targetId): void
+    {
+        if (!$this->packageId) {
+            throw new \Exception('Package id not set.');
+        }
+
+        if (!$targetId) {
+            throw new \Exception('Target id not set.');
+        }
+
+        $this->httpClient->delete('/v3/3as/packages/'. $this->packageId . '/assignments/' . $targetId);
     }
 }

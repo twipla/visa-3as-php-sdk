@@ -15,7 +15,7 @@ class PackagesApi
     public function __construct(VisaHttpClient $visaHttpClient)
     {
         $this->httpClient = $visaHttpClient;
-        $this->hydrator = new PackageHydrator();
+        $this->hydrator = new PackageHydrator(new PackageRestrictionHydrator());
     }
 
     /**
@@ -44,12 +44,28 @@ class PackagesApi
     }
 
     /**
+     * @param string|null $intpWebsiteId
+     * @param string|null $intpCustomerId
      * @return Package[]
      * @throws GuzzleException
      */
-    public function list(): array
+    public function list(string $intpWebsiteId = null, string $intpCustomerId = null): array
     {
-        $response = $this->httpClient->get('/v2/3as/packages');
+        $query = '';
+        if (!empty($intpWebsiteId)) {
+            $query .= 'intpWebsiteId=' . $intpWebsiteId;
+        }
+        if (!empty($intpCustomerId)) {
+            if (!empty($query)) {
+                $query .= '&';
+            }
+            $query .= 'intpCustomerId=' . $intpCustomerId;
+        }
+        if (!empty($query)) {
+            $query = '?' . $query;
+
+        }
+        $response = $this->httpClient->get('/v2/3as/packages'. $query);
 
         return $this->hydrator->hydrateObjectArray($response->getPayload());
     }
