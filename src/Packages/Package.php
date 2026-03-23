@@ -6,6 +6,9 @@ namespace Visa\Packages;
 
 class Package
 {
+    const string VISIBILITY_PUBLIC = 'public';
+    const string VISIBILITY_RESTRICTED = 'restricted';
+
     private string $id;
     private string $name;
     private float $price;
@@ -15,6 +18,8 @@ class Package
     private bool $recommended;
     private string $intpId;
     private string $createdAt;
+    private array $restrictedTo = [];
+    private string $visibility;
 
     /**
      * @return string
@@ -167,4 +172,44 @@ class Package
     {
         return $this->createdAt;
     }
+
+    public function getRestrictedTo(): array
+    {
+        return $this->restrictedTo;
+    }
+
+    public function setRestrictedTo(array $restrictedTo): void
+    {
+        $this->restrictedTo = $restrictedTo;
+    }
+
+    public function addRestrictedTo(PackageRestriction $restriction): void
+    {
+        $this->restrictedTo[] = $restriction;
+    }
+
+    public function removeRestrictedTo(PackageRestriction $restriction): void
+    {
+        foreach ($this->restrictedTo as $key => $existingRestriction) {
+            if ($existingRestriction === $restriction) {
+                unset($this->restrictedTo[$key]);
+                break;
+            }
+        }
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(string $visibility): void
+    {
+        if (!in_array($visibility, [self::VISIBILITY_PUBLIC, self::VISIBILITY_RESTRICTED])) {
+            throw new \InvalidArgumentException("Invalid visibility value: $visibility");
+        }
+        $this->visibility = $visibility;
+    }
+
+
 }

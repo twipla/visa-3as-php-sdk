@@ -182,9 +182,13 @@ $visa->intpc({INTP_CUSTOMER_ID})->generateIFrameDashboardUrl({INTP_WEBSITE_ID});
 An Integration Partner (INTP) is able to get data about their packages
 
 #### List all available packages
+Returns all packages available within the company.
+Filtering options:
+INTP_WEBSITE_ID - Filters the response to return only packages visible to this website — all public packages plus any custom ones assigned to it.
+INTP_CUSTOMER_ID - Filters the response to return only packages visible to this customer — all public packages plus any custom ones assigned to it.
 
 ```php
-$visa->packages->list();
+$visa->packages->list({INTP_WEBSITE_ID}, {INTP_CUSTOMER_ID});
 ```
 
 #### Get a single package by ID
@@ -202,6 +206,7 @@ $visa->packages->create([
     'price' => {FLOAT},
     'currency' => {CURRENCY_CODE}, // ex: EUR, USD, RON
     'period' => {PERIOD}, // ex: monthly, yearly
+    'visibility' => {'public'|'restricted'}, // controls who can access the package. 'public' packages are available to all clients; 'restricted' packages can be assigned to specific clients only.
 ]);
 ```
 
@@ -213,6 +218,31 @@ $visa->packages->create([
 $visa->package({PACKAGE_UUID})->update([
     'name' => {UPDATED_PACKAGE_NAME}
 ]);
+```
+#### An INTP can assign a package to a target
+Assign a custom package to a specific client {TARGET_ID} - this is a website ID or a customer ID depending on your subscription type.
+
+Note: Only packages with visibility = restricted can be used.
+
+Steps:
+
+    1. Create the customer or website (if they don't already exist). They will initially use the free or unlimited free plan.
+    2. Create a custom package with visibility = restricted.
+    3. Assign the package to the specific customer or website using this endpoint.
+    4. Upgrade the subscription to this custom package.
+
+
+```php
+$visa->package({PACKAGE_UUID})->assign({TARGET_ID});
+```
+
+#### An INTP can unassign a package to a target
+Unassign a custom package from a specific client {TARGET_ID} - this is a website ID or a customer ID depending on your subscription type.
+
+Note: If an active subscription exists for this package, unassigning it will not cancel the subscription — it will continue to run as normal until the package is explicitly changed.
+
+```php
+$visa->package({PACKAGE_UUID})->unassign({TARGET_ID});
 ```
 
 ### Websites API
